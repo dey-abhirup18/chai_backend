@@ -1,1 +1,7 @@
 Utils are basically the functions or functionalities that are repeated in each and every file
+
+db folder contains the functionalities to connect the Mongo DB that is the databse
+
+Here, DB_NAME means the databse name which we have stored in the constants file
+
+Until now we have learnt how to connect our server with the mongoDB databse
