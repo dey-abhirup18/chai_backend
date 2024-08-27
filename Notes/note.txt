@@ -5,3 +5,5 @@ db folder contains the functionalities to connect the Mongo DB that is the datab
 Here, DB_NAME means the databse name which we have stored in the constants file
 
 Until now we have learnt how to connect our server with the mongoDB databse
+
+Higher Order Functions means the functions are basically the functions which can accept the functions as their parameter and also they can return the functions
