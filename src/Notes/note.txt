@@ -1,0 +1,1 @@
+Utils are basically the functions or functionalities that are repeated in each and every file
