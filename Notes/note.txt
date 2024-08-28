@@ -9,3 +9,49 @@ Until now we have learnt how to connect our server with the mongoDB databse
 Higher Order Functions means the functions are basically the functions which can accept the functions as their parameter and also they can return the functions
 
 JWT is an bearer token --- JSON Web Token
+All the things related to file handling is been handled by backend engineers
+
+HTTP Crash Course 
+Hyper Text Transfer Protocol
+
+URL -- URI -- URN   -- Uniform resource locator
+
+What are HTTP Headers ?
+
+metadata -------> Key - value sent with request and response
+
+Caching, authentication, manage state
+     X - prefic --> 2012 (X - depracted)
+
+Request Headers ---> Form Client
+Response Headers  ---> From Server
+Representation Headers ---> encoding/compression
+Payload Headers ---> Data
+
+HTTP Methods 
+Basic set of operations that can be used to interact with Server
+
+GET :- Retreive a resource
+HEAD : Gives the Header of the data 
+OPTIONS -- what operations are available
+TRACE -- Loopback test (get same data)
+DELETE : remove a resource
+PUT : replace a resource
+POST : Interact with resource
+PATCH : Change a part of a resource
+
+HTTP Status Code 
+
+100 Continue
+102 Processing
+200 Ok 
+201 created
+202 Accepted
+307 Temporary redirect
+308 Permanent redirect
+400 Bad request
+401 Unauthorized
+402 Payment required
+404 Not found
+500 Internal server error
+504 Gateway time Out
