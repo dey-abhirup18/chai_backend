@@ -22,7 +22,6 @@ export const verifyJWT = asyncHandler(
                const user = await User.findById(decodedToken?._id).select("-password -refreshToken");
 
                if (!user) {
-                    // discuss about frontend
                     throw new ApiEApiErrorrror(401, "Invlaid Access Token");
                }
                req.user = user;

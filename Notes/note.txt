@@ -15,6 +15,9 @@ Access token is generally assigned to the user who has logged in at that person 
 Req.body contains the data in the text format, in the body format and in the form of form
 Access Token and the refresh Token are solely for protecting the users from getting hacked. We basically reverihy the deatils while letting the user login and logout
 
+Know about access token and refresh token 
+access token --- short token
+
 Step 1. Make the function that is the controller 
 Step 2. Work on the routes path in the app file
 Step 3. Work on the actual router path on the router file
