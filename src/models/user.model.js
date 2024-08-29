@@ -92,4 +92,5 @@ userSchema.methods.generateRefreshToken = function () {
      )
 }
 
-export const User = mongoose.model("User", userSchema);
+export const User = mongoose.model("User", userSchema); 
+// This user is directly connected with the mongoDB database

@@ -1,0 +1,34 @@
+import { ApiError } from "../utils/ApiError.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import jwt from 'jsonwebtoken';
+import { User } from "../models/user.model.js";
+
+export const verifyJWT = asyncHandler(
+
+     async (req, _, next) => {
+
+          try {
+               // The other code on the right side of the OR is for the mobile application which do not store the tokens in the cookies as the cookies are associated with the web services not the mobile app
+
+               // Until now we have got the cookies
+               const token = req.cookies?.accessToken || req.header("Authorization")?.replcae("Bearer ", "")
+
+               if (!token) {
+                    throw new ApiError(401, "Unauthorized request");
+               }
+
+               const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+               const user = await User.findById(decodedToken?._id).select("-password -refreshToken");
+
+               if (!user) {
+                    // discuss about frontend
+                    throw new ApiEApiErrorrror(401, "Invlaid Access Token");
+               }
+               req.user = user;
+               next();
+          } catch (error) {
+               throw new ApiError(401, error?.message || "Invalid access token");
+          }
+     }
+);

@@ -11,6 +11,14 @@ Higher Order Functions means the functions are basically the functions which can
 JWT is an bearer token --- JSON Web Token
 All the things related to file handling is been handled by backend engineers
 
+Access token is generally assigned to the user who has logged in at that person has to access the data or has to made any kind of changes or to update an data and once this access token gets expired and then the person is automatically discontinued from accessing the data.
+Req.body contains the data in the text format, in the body format and in the form of form
+Access Token and the refresh Token are solely for protecting the users from getting hacked. We basically reverihy the deatils while letting the user login and logout
+
+Step 1. Make the function that is the controller 
+Step 2. Work on the routes path in the app file
+Step 3. Work on the actual router path on the router file
+
 HTTP Crash Course 
 Hyper Text Transfer Protocol
 
