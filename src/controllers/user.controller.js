@@ -4,6 +4,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from 'jsonwebtoken';
+import mongoose, { mongo } from "mongoose";
 
 const generateAccessAndRefreshTokens = async (userId) => {
      try {
@@ -308,7 +309,7 @@ const updateAccountDetails = asyncHandler(
                throw new ApiError(400, "All fields are required")
           }
 
-          const user = User.findByIdAndUpdate(            // await
+          const user = await User.findByIdAndUpdate(
                req.user?._id, //
                {
                     $set: {
@@ -340,6 +341,8 @@ const updateUserAvatar = asyncHandler(
           }
 
           const avatar = await uploadOnCloudinary(avatarLocalPath); // URL Link from cloudinary
+
+          // Delete the file from the server to reduce the congestion in the network after the code study
 
           if (!avatar.url) {
                throw new ApiError(400, "Error while uploading on avatar");
@@ -400,6 +403,155 @@ const updateUserCoverImage = asyncHandler(
 
 )
 
+// channel details function
+const getUserChannelProfile = asyncHandler(
+
+     async (res, req) => {
+
+          const { username } = req.params;
+
+          if (!username?.trim()) {
+               throw new ApiError(400, "username is missing");
+          }
+
+          // Here, since we are using User.aggregate therefore an new instance will be creared in the User model of the database 
+          // or a new array with match results will stored in the array
+          // Here, channel means the user to whom we will be subscribing
+          // Let's us suppose there is a channel name X
+          const channel = await User.aggregate([
+               {
+                    $match: {
+                         username: username?.toLowerCase()
+                         // Here, I find the channel from the list in the database
+                    }
+               },
+               {
+                    $lookup: {
+                         from: "subscriptions",
+                         localField: "_id", // Current channel id which is stored in the databse
+                         foreignField: "channel",
+                         as: "subscribers" // Here, I got the list of the documenst with the subsdcriber
+                    }
+               },
+               {
+                    // Here, we get the number of channels we have subscribed
+                    $lookup: {
+                         from: "subscriptions",
+                         localField: "_id", // Current channel id which is stored in the databse
+                         foreignField: "subscriber",
+                         as: "subscribedTo"  // Here, I got the list of the channels to whom I have subscribed
+                    }
+               },
+               {
+                    $addFields: {
+                         subscribersCount: {
+                              $size: "$subscribers"
+                         },
+                         channelsSubscribedToCount: {
+                              $size: "$subscribedTo"
+                         },
+                         // Until now we have got the information related to the channel that user hv searched throgh the URL and the context is about the channel that the user has searched
+                         // ---------------------------------------------------------------------------------------------------------------------------------------------------- //
+                         // Here, the user is also a user model so the user also has a field of subscriber in which the channel he has subscribed is stored and it is a seperate document which is made, here the context is about the user who have logged in
+                         isSubscribed: {
+                              $cond: {
+                                   // req.user gives the id and then we go in the subscribers array and in that 
+                                   if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+                                   then: true,
+                                   else: false
+                              }
+                         }
+                    }
+               },
+               {
+                    $project: {
+                         fullname: 1,
+                         username: 1,
+                         subscribersCount: 1,
+                         channelsSubscribedToCount: 1,
+                         isSubscribed: 1,
+                         avatar: 1,
+                         coverImage: 1
+                    }
+               }
+          ])
+
+          if (!channel?.length) {
+               throw new ApiError(404, "channel does not exist")
+          }
+
+          return res
+               .status(200)
+               .json(
+                    new ApiResponse(200, channel[0], "User channel fetched successfully")
+               )
+
+     }
+
+)
+
+// get user watch history
+const getWatchHistory = asyncHandler(
+
+     async (req, res) => {
+
+          const user = await User.aggregate([
+               {
+                    $match: {
+                         _id: new mongoose.Types.ObjectId(req.user._id)
+                    }
+               },
+               {
+                    // Look up gives us a temporay data for further processing of the data
+                    $lookup: {
+                         from: "videos",
+                         localField: "watchHistory",
+                         foreignField: "_id",
+                         as: "watchHistory",
+                         pipeline: [
+                              {
+                                   $lookup: {
+                                        from: "users",
+                                        localField: "owner",
+                                        foreignField: "_id",
+                                        as: "owner",
+                                        pipeline: [
+                                             {
+                                                  $project: {
+                                                       fullname: 1,
+                                                       username: 1,
+                                                       avatar: 1
+                                                  }
+                                             }
+                                        ]
+                                   }
+                              },
+                              {
+                                   $addFields: {
+                                        owner: {
+                                             $first: "$owner"
+                                        }
+                                   }
+                              }
+                         ]
+                    }
+               }
+          ])
+
+          return res
+               .status(200)
+               .json(
+                    new ApiResponse(
+                         200,
+                         user[0].watchHistory,
+                         "Watch History fetched successfully"
+                    )
+               )
+
+     }
+
+)
+
 export {
      registerUser,
      loginUser,
@@ -409,5 +561,7 @@ export {
      getCurrentUser,
      updateAccountDetails,
      updateUserAvatar,
-     updateUserCoverImage
+     updateUserCoverImage,
+     getUserChannelProfile,
+     getWatchHistory
 };        

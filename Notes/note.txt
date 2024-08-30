@@ -18,6 +18,9 @@ Access Token and the refresh Token are solely for protecting the users from gett
 Know about access token and refresh token 
 access token --- short token
 
+Notes for SDE 2 && SDE 3
+
+
 Step 1. Make the function that is the controller 
 Step 2. Work on the routes path in the app file
 Step 3. Work on the actual router path on the router file
