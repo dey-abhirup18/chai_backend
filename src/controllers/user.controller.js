@@ -186,8 +186,8 @@ const logoutUser = asyncHandler(
           await User.findByIdAndUpdate(
                req.user._id,
                {
-                    $set: {
-                         refreshToken: undefined
+                    $unset: {
+                         refreshToken: 1
                     }
                },
                {
@@ -464,6 +464,7 @@ const getUserChannelProfile = asyncHandler(
                     }
                },
                {
+                    // Project tells us which data which are actually sending    
                     $project: {
                          fullname: 1,
                          username: 1,
